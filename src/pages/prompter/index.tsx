@@ -1,13 +1,17 @@
-import FontPicker from 'font-picker-react';
-import { useEffect, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
-import { ConnectionPill, JoinRoom } from '../../components';
+import { useEffect, useRef, useState } from 'react';
+import FontPicker from 'font-picker-react';
+import { useLocation } from 'react-router-dom';
+
+import { ConnectionPill, RoomInfo } from '../../components';
 import useLocalStorage from '../../hooks/useLocalStorage';
-import { connectSocket, exportText } from '../../utils/helper';
+import { exportText } from '../../utils/helper';
 
 import './index.css';
 
-function Prompter() {
+function Prompter({ socket }: { socket: any }) {
+  const { state } = useLocation();
+
   const [message, setMessage] = useLocalStorage('message', '');
   const [bgColor, setBgColor] = useState<string>('#ffffff');
   const [fontColor, setFontColor] = useState<string>('#000000');
@@ -15,7 +19,7 @@ function Prompter() {
   const [fontSize, setFontSize] = useState<string>('16');
   const [width, setWidth] = useState<string>('800');
   const [height, setHeight] = useState<string>('100');
-  const [roomJoined, setRoomJoined] = useState('');
+  const [roomName, setRoomName] = useState<string>('');
 
   const backgroundRef = useRef<any>();
   const fontColorRef = useRef<any>();
@@ -25,8 +29,12 @@ function Prompter() {
   const heightRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    let socket = connectSocket();
+    if (state) {
+      setRoomName(`Room:  ${state.room}`);
+    }
+  }, [state]);
 
+  useEffect(() => {
     const scrollToLastMessage = () => {
       let message = messageRef.current;
       message?.scroll({
@@ -34,15 +42,13 @@ function Prompter() {
         behavior: 'smooth',
       });
     };
-    socket.on('live-translate-receive', (data) => {
+
+    socket.on('live-translate-receive', (data: any) => {
       flushSync(() => {
         setMessage(data);
       });
       scrollToLastMessage();
     });
-    return () => {
-      socket.disconnect();
-    };
   }, []);
 
   useEffect(() => {
@@ -101,21 +107,14 @@ function Prompter() {
     exportText(message);
   };
 
-  // if (!roomJoined) {
-  //   return (
-  //     <div className='h-screen flex items-center justify-center'>
-  //       <JoinRoom onJoined={setRoomJoined} />
-  //     </div>
-  //   );
-  // }
-
   return (
-    <div className='flex items-center flex-col justify-between relative'>
-      <ConnectionPill />
+    <div className='flex items-center flex-col justify-between relative p-4'>
+      <RoomInfo socket={socket} roomName={roomName} />
+      <ConnectionPill socket={socket} />
+
       <div ref={messageRef} className='message apply-font'>
         {message}
       </div>
-
       <div className='flex flex-col mb-[200px]'>
         <h3 className='text-center mb-[10px] text-xl'>Customize</h3>
 
@@ -195,13 +194,11 @@ function Prompter() {
           </div>
         </div>
         <button
-          className='w-full bg-green-600 hover:bg-green-700 h-[50px] border-0 rounded-sm cursor-pointer text-white mt-3'
+          className='w-full bg-violet-600 hover:bg-violet-800 h-[50px] border-0 rounded-md cursor-pointer text-white mt-3'
           onClick={handleExport}
         >
           Export Speech
         </button>
-
-        <JoinRoom onJoined={setRoomJoined} />
       </div>
     </div>
   );

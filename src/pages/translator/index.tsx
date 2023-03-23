@@ -1,50 +1,55 @@
-import { useState } from 'react';
-import { ConnectionPill, JoinRoom } from '../../components';
+import { useContext, useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
+import { ConnectionPill, RoomInfo } from '../../components';
+import { GlobalContext } from '../../context/globalContext';
 import useLocalStorage from '../../hooks/useLocalStorage';
-import { connectSocket, exportText } from '../../utils/helper';
+import { exportText } from '../../utils/helper';
 
-let socket = connectSocket();
+function Translator({ socket }: { socket: any }) {
+  const { room } = useContext(GlobalContext);
 
-function Translator() {
   const [message, setMessage] = useLocalStorage('message', '');
-  const [roomJoined, setRoomJoined] = useState('');
+  const [roomName, setRoomName] = useState<string>('');
+
+  const { state } = useLocation();
+
+  useEffect(() => {
+    if (state) {
+      setRoomName(`Room:  ${state.room}`);
+    }
+  }, [state]);
 
   const handleExport = () => {
     exportText(message);
   };
 
-  // if (!roomJoined) {
-  //   return (
-  //     <div className='h-screen flex items-center justify-center'>
-  //       <JoinRoom onJoined={setRoomJoined} />
-  //     </div>
-  //   );
-  // }
-
   return (
     <div className='flex items-center justify-center flex-col p-4 relative'>
-      <ConnectionPill />
+      <RoomInfo socket={socket} roomName={roomName} />
+
+      <ConnectionPill socket={socket} />
       <div className='mb-5 mt-5 md:mt-0'>
         <h1 className='text-2xl'>Live Translation</h1>
       </div>
-
       <div className='w-[100%] md:w-[80%] '>
         <textarea
           placeholder='Message'
-          className='w-full h-[300px] p-2'
+          className='border-2 border-solid border-gray-300 rounded-md w-full h-[300px] p-2'
           onChange={(e) => {
             setMessage(e.target.value);
-            socket.emit('live-translate', e.target.value, roomJoined);
+          }}
+          onKeyDown={(e) => {
+            if (e.code === 'Space') {
+              socket.emit('live-translate', message, room);
+            }
           }}
           value={message}
         >
           {message}
         </textarea>
 
-        <JoinRoom onJoined={setRoomJoined} />
-
         <button
-          className='w-full bg-green-600 hover:bg-green-700 h-[50px] border-0 rounded-sm cursor-pointer text-white mt-3'
+          className='w-full bg-violet-600 hover:bg-violet-800 h-[50px] border-0 rounded-md cursor-pointer text-white mt-3'
           onClick={handleExport}
         >
           Export Speech

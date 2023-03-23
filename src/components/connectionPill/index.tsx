@@ -1,18 +1,12 @@
 import { useEffect, useState } from 'react';
-import { connectSocket } from '../../utils/helper';
 
-function ConnectionPill() {
+function ConnectionPill({ socket }: { socket: any }) {
   const [connection, setConnection] = useState(false);
 
   useEffect(() => {
-    connectSocket().on('connect', () => {
-      setConnection(true);
-    });
+    setConnection(socket.connected);
+  }, [socket.connected]);
 
-    connectSocket().on('disconnect', () => {
-      setConnection(false);
-    });
-  }, []);
   return (
     <div className={`connection ${connection ? 'connected' : 'disconnected'}`}>
       <span></span>
