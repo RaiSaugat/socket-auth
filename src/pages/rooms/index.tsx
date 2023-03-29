@@ -1,36 +1,42 @@
 import { useContext, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useOutletContext } from 'react-router-dom';
 import { GlobalContext } from '../../context/globalContext';
 import useLocalStorage from '../../hooks/useLocalStorage';
-import { connectSocket } from '../../utils/helper';
 
 function Rooms() {
   const { setRoom, setType } = useContext(GlobalContext);
+  const { socket }: { socket: any } = useOutletContext();
 
   const [localRoomName, setLocalRoomName] = useLocalStorage('room', '');
   const [localType, setLocalType] = useLocalStorage('type', '');
-  const [token, setToken] = useState<string>('');
+  const [token, setToken] = useState('');
+
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const navigate = useNavigate();
 
   const handleJoinRoom = (e: any) => {
     e.preventDefault();
-
-    connectSocket().emit(
+    socket.connect();
+    socket.emit(
       'join-room',
-      { room: localRoomName, type: localType },
-      (data: string) => {
-        navigate('/telecast', {
-          state: {
-            room: data,
-          },
-        });
+      { room: localRoomName, type: localType, masterToken: token },
+      (data: { success: boolean; message: string }) => {
+        if (!data.success) {
+          setErrorMessage(data.message);
+        } else {
+          navigate('/telecast', {
+            state: {
+              room: data.message,
+            },
+          });
+        }
       }
     );
   };
 
   return (
-    <div>
+    <div className='flex flex-col h-full items-center justify-center'>
       <form className='bg-violet-100 border-2 border-violet-300 border-solid rounded-md p-5'>
         <div className='mb-4'>
           <span className='block'>Room</span>
@@ -70,6 +76,7 @@ function Rooms() {
             type='text'
             value={token}
             onChange={(e) => {
+              setErrorMessage('');
               setToken(e.target.value);
             }}
             className='w-full h-10 p-2 border-2 border-gray-300 rounded-md mr-4'
@@ -88,6 +95,7 @@ function Rooms() {
           Join
         </button>
       </form>
+      {errorMessage && <div className='text-red-400 mt-2'>{errorMessage}</div>}
     </div>
   );
 }

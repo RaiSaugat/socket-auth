@@ -1,7 +1,7 @@
 import { flushSync } from 'react-dom';
 import { useEffect, useRef, useState } from 'react';
 import FontPicker from 'font-picker-react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useOutletContext } from 'react-router-dom';
 
 import { ConnectionPill, RoomInfo } from '../../components';
 import useLocalStorage from '../../hooks/useLocalStorage';
@@ -9,8 +9,9 @@ import { exportText } from '../../utils/helper';
 
 import './index.css';
 
-function Prompter({ socket }: { socket: any }) {
+function Prompter() {
   const { state } = useLocation();
+  const { socket }: { socket: any } = useOutletContext();
 
   const [message, setMessage] = useLocalStorage('message', '');
   const [bgColor, setBgColor] = useState<string>('#ffffff');

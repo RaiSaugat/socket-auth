@@ -1,12 +1,13 @@
 import { useContext, useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useOutletContext } from 'react-router-dom';
 import { ConnectionPill, RoomInfo } from '../../components';
 import { GlobalContext } from '../../context/globalContext';
 import useLocalStorage from '../../hooks/useLocalStorage';
 import { exportText } from '../../utils/helper';
 
-function Translator({ socket }: { socket: any }) {
+function Translator() {
   const { room } = useContext(GlobalContext);
+  const { socket }: { socket: any } = useOutletContext();
 
   const [message, setMessage] = useLocalStorage('message', '');
   const [roomName, setRoomName] = useState<string>('');
@@ -26,7 +27,6 @@ function Translator({ socket }: { socket: any }) {
   return (
     <div className='flex items-center justify-center flex-col p-4 relative'>
       <RoomInfo socket={socket} roomName={roomName} />
-
       <ConnectionPill socket={socket} />
       <div className='mb-5 mt-5 md:mt-0'>
         <h1 className='text-2xl'>Live Translation</h1>

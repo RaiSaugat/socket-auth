@@ -1,11 +1,7 @@
 import { io } from 'socket.io-client';
 
-let socket = io('http://localhost:3001', {
-  transports: ['websocket', 'polling'],
-});
-
-export const connectSocket = () => {
-  return socket;
+export const getToken = () => {
+  return JSON.parse(localStorage.getItem('master-token') || '{}');
 };
 
 export const exportText = (text: string) => {
@@ -23,4 +19,15 @@ export const exportText = (text: string) => {
 
   // clean up the URL object
   URL.revokeObjectURL(url);
+};
+
+export const connectSocket = () => {
+  console.log('connected');
+  let socket = io('http://localhost:3001', {
+    transports: ['websocket', 'polling'],
+    auth: {
+      token: getToken(),
+    },
+  });
+  return socket;
 };

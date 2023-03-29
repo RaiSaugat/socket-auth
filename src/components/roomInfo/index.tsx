@@ -4,9 +4,12 @@ function RoomInfo({ roomName, socket }: { roomName: string; socket: any }) {
   const navigate = useNavigate();
   const handleLeaveRoom = () => {
     socket.emit('leave-room', roomName, () => {
+      socket.disconnect();
       localStorage.removeItem('room');
       localStorage.removeItem('type');
-      navigate('/');
+      localStorage.removeItem('message');
+      navigate('/rooms');
+      window.location.reload();
     });
   };
   return (

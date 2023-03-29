@@ -1,8 +1,11 @@
 import { useState } from 'react';
-import { BrowserRouter } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from 'react-query';
+import { ToastContainer } from 'react-toastify';
+
+import 'react-toastify/dist/ReactToastify.css';
 
 import { GlobalContext } from './context/globalContext';
-import router from './router';
+import Router from './router';
 
 function App() {
   const [room, setRoom] = useState('');
@@ -10,12 +13,17 @@ function App() {
     JSON.parse(localStorage.getItem('type') || '{}')
   );
 
+  const queryClient = new QueryClient();
+
   return (
-    <GlobalContext.Provider value={{ room, type, setRoom, setType }}>
-      <div className='bg-purple-50 h-screen'>
-        <BrowserRouter> {router}</BrowserRouter>
-      </div>
-    </GlobalContext.Provider>
+    <QueryClientProvider client={queryClient}>
+      <ToastContainer theme='light' autoClose={3000} />
+      <GlobalContext.Provider value={{ room, type, setRoom, setType }}>
+        <div className='bg-purple-50 h-screen'>
+          <Router />
+        </div>
+      </GlobalContext.Provider>
+    </QueryClientProvider>
   );
 }
 
