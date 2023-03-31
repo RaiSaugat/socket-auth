@@ -4,8 +4,8 @@ import { ToastContainer } from 'react-toastify';
 
 import 'react-toastify/dist/ReactToastify.css';
 
-import { GlobalContext } from './context/globalContext';
-import Router from './router';
+import { GlobalContext } from '@/context/globalContext';
+import Router from '@/router';
 
 function App() {
   const [room, setRoom] = useState('');

@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { useLogin } from '../../hooks/useLoginData';
-import { Loader } from '../../components';
+
+import { useLogin } from '@/hooks/useLoginData';
+import { Loader } from '@/components';
 
 function Login() {
   const navigate = useNavigate();
@@ -44,20 +44,36 @@ function Login() {
       navigate('/admin');
     }
   };
-  const handleOnError = (err: { message: string }) => {
-    toast.error(err.message);
+
+  const handleOnError = (
+    error: { field: string; message: string }[] | string | { message: string }
+  ) => {
+    if (!Array.isArray(error)) {
+      toast.error(error as string);
+    } else {
+      error.map((err) => {
+        toast.error(err.message);
+      });
+    }
   };
 
   const { mutate, isLoading } = useLogin(handleOnSuccess, handleOnError);
 
-  const handleLogin = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleLogin = (e: React.MouseEvent<HTMLFormElement>) => {
     e.preventDefault();
     mutate({ email, password });
   };
 
   return (
     <div className='flex items-center justify-center h-screen'>
-      <form className='bg-violet-100 border-2 border-violet-300 border-solid rounded-md p-5'>
+      <form
+        onSubmit={(e: React.MouseEvent<HTMLFormElement>) => {
+          if (!isLoading) {
+            handleLogin(e);
+          }
+        }}
+        className='bg-violet-100 border-2 border-violet-300 border-solid rounded-md p-5'
+      >
         <div className='mb-4'>
           <span className='block mb-1'>Email</span>
           <input
@@ -67,6 +83,7 @@ function Login() {
               setError('');
               setEmail(e.target.value);
             }}
+            required
             className='w-full h-10 p-2 border-2 border-gray-300 rounded-md mr-4'
           />
         </div>
@@ -80,17 +97,14 @@ function Login() {
               setError('');
               setPassword(e.target.value);
             }}
+            required
             className='w-full h-10 p-2 border-2 border-gray-300 rounded-md mr-4'
           />
         </div>
 
         <button
           className='mt-4 px-2 py-4 bg-violet-600 hover:bg-violet-800 text-white h-10 w-full rounded-md flex items-center justify-center font-bold cursor-pointer mr-4 text-sm disabled:opacity-50 disabled:cursor-not-allowed'
-          onClick={(e) => {
-            if (!isLoading) {
-              handleLogin(e);
-            }
-          }}
+          type='submit'
           disabled={isLoading}
         >
           {isLoading ? <Loader color='#fff' /> : 'Login'}

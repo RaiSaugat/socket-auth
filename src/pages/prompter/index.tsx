@@ -1,13 +1,13 @@
-import { flushSync } from 'react-dom';
 import { useEffect, useRef, useState } from 'react';
+import { flushSync } from 'react-dom';
 import FontPicker from 'font-picker-react';
 import { useLocation, useOutletContext } from 'react-router-dom';
 
-import { ConnectionPill, RoomInfo } from '../../components';
-import useLocalStorage from '../../hooks/useLocalStorage';
-import { exportText } from '../../utils/helper';
-
 import './index.css';
+
+import { ConnectionPill, RoomInfo } from '@/components';
+import useLocalStorage from '@/hooks/useLocalStorage';
+import { exportText } from '@/utils/helper';
 
 function Prompter() {
   const { state } = useLocation();

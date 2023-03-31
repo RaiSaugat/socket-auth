@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import CopyIcon from '../../assets/copy.svg';
+import CopyIcon from '@/assets/copy.svg';
 
 function CopyClipboard({ text }: { text: string }) {
   const [copySuccess, setCopySuccess] = useState<boolean>(false);

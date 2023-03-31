@@ -4,8 +4,14 @@ function ConnectionPill({ socket }: { socket: any }) {
   const [connection, setConnection] = useState(false);
 
   useEffect(() => {
-    setConnection(socket.connected);
-  }, [socket.connected]);
+    const timer = setTimeout(() => {
+      if (socket) setConnection(socket.connected);
+    }, 2000);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [socket]);
 
   return (
     <div className={`connection ${connection ? 'connected' : 'disconnected'}`}>

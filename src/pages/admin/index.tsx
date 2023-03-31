@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { toast } from 'react-toastify';
 
-import CopyClipboard from '../../components/copyClipboard';
-import { useGenerateToken, useUpdateToken } from '../../hooks/useAdminData';
-import { useFetchToken } from '../../hooks/useTokenData';
+import { CopyClipboard } from '@/components';
+import { useGenerateToken, useUpdateToken } from '@/hooks/useAdminData';
+import { useFetchToken } from '@/hooks/useTokenData';
 
 type TokenDTO = {
   createdAt: string;

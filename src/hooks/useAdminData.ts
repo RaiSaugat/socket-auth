@@ -1,68 +1,46 @@
-import axios, { AxiosError } from 'axios';
 import { useMutation } from 'react-query';
 
-const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+import axiosService from '@/lib/api/axiosService';
 
-const updateAdminProfile = ({
-  email,
-  username,
-}: {
-  username: string;
+type UserDTO = {
   email: string;
-}) => {
-  return axios({
-    method: 'PUT',
-    url: 'http://localhost:3001/user',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${userData.token}`,
-    },
-    data: {
-      email,
-      username,
-    },
-  }).then((response) => response.data);
+  username: string;
+  password?: string;
 };
 
-const updateToken = (tokenId: string) => {
-  return axios({
-    method: 'PUT',
-    url: `http://localhost:3001/token/${tokenId}`,
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: 'Bearer ' + userData.token,
-    },
-    data: {
-      tokenId,
-    },
-  }).then((response) => response.data);
+const updateAdminProfile = async ({ email, username, password }: UserDTO) => {
+  const payload: UserDTO = {
+    email,
+    username,
+  };
+
+  if (password) {
+    payload.password = password;
+  }
+  return await axiosService
+    .put(`/api/v1/user`, payload, true)
+    .then((response: any) => response.data);
 };
 
-const generateToken = () => {
-  return axios({
-    method: 'GET',
-    url: `http://localhost:3001/generate-token`,
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: 'Bearer ' + userData.token,
-    },
-  }).then((response) => response.data);
+const updateToken = async (tokenId: string) => {
+  return await axiosService
+    .put(`/api/v1/token/${tokenId}`, {}, true)
+    .then((response: any) => response.data);
 };
 
-const createUser = (data: {
+const generateToken = async () => {
+  return await axiosService
+    .get(`/api/v1/generate-token`, true)
+    .then((response: any) => response.data);
+};
+
+const createUser = async (data: {
   email: string;
   password: string;
   type: 'USER' | 'ADMIN';
   username: string;
 }) => {
-  return axios({
-    method: 'POST',
-    url: 'http://localhost:3001/signup',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    data,
-  }).then((response) => response.data);
+  return await axiosService.post(`/api/v1/signup`, data);
 };
 
 export const useUpdateAdminProfile = (onSuccess?: any, onError?: any) => {
@@ -94,8 +72,10 @@ export const useGenerateToken = (onSuccess?: any, onError?: any) => {
 export const useCreateUser = (onSuccess?: any, onError?: any) => {
   return useMutation('createUser', createUser, {
     onSuccess,
-    onError: (error: AxiosError) => {
-      onError(error.response?.data);
+    onError: (
+      error: string | { message: string } | { field: string; message: string }[]
+    ) => {
+      onError(error);
     },
   });
 };

@@ -1,6 +1,6 @@
 import { useContext } from 'react';
-import { useOutletContext } from 'react-router-dom';
-import { GlobalContext } from '../../context/globalContext';
+
+import { GlobalContext } from '@/context/globalContext';
 import Prompter from '../prompter';
 import Translator from '../translator';
 

@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useQuery } from 'react-query';
 import {
   BrowserRouter,
   Navigate,
@@ -7,8 +6,9 @@ import {
   Route,
   Routes,
 } from 'react-router-dom';
-import { Header } from './components';
-import { useFetchToken } from './hooks/useTokenData';
+import { Header } from '@/components';
+
+import { useFetchToken } from '@/hooks/useTokenData';
 import {
   Prompter,
   Translator,
@@ -17,10 +17,9 @@ import {
   Admin,
   CreateUser,
   AdminProfile,
-} from './pages';
-
-import Login from './pages/login';
-import { connectSocket } from './utils/helper';
+} from '@/pages';
+import Login from '@/pages/login';
+import { connectSocket } from '@/utils/helper';
 
 export const ProtectedRoute = () => {
   const data = localStorage.getItem('userData');
@@ -28,14 +27,13 @@ export const ProtectedRoute = () => {
 
   const [socket, setSocket] = useState<any>(null);
 
-  const handleOnSuccess = (data: {
+  const handleOnSuccess = async (data: {
     id: string;
     createdAt: string;
     token: string;
     userId: string;
   }) => {
-    localStorage.setItem('master-token', JSON.stringify(data.token));
-    const socket = connectSocket();
+    const socket = await connectSocket();
     setSocket(socket);
   };
 
@@ -43,7 +41,7 @@ export const ProtectedRoute = () => {
 
   return type === 'USER' ? (
     <>
-      <Header />
+      <Header socket={socket} />
       <Outlet context={{ socket }} />
     </>
   ) : (

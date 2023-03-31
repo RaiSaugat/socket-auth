@@ -1,8 +1,5 @@
 import { io } from 'socket.io-client';
-
-export const getToken = () => {
-  return JSON.parse(localStorage.getItem('master-token') || '{}');
-};
+import { fetchToken } from '../hooks/useTokenData';
 
 export const exportText = (text: string) => {
   // create a new text file
@@ -21,13 +18,15 @@ export const exportText = (text: string) => {
   URL.revokeObjectURL(url);
 };
 
-export const connectSocket = () => {
-  console.log('connected');
+export const connectSocket = async () => {
+  const { token } = await fetchToken();
+
   let socket = io('http://localhost:3001', {
     transports: ['websocket', 'polling'],
     auth: {
-      token: getToken(),
+      token,
     },
   });
+
   return socket;
 };

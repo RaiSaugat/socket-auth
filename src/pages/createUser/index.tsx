@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { toast } from 'react-toastify';
 import cn from 'classnames';
 
-import { useCreateUser } from '../../hooks/useAdminData';
+import { useCreateUser } from '@/hooks/useAdminData';
 
 function CreateUser() {
   const [name, setName] = useState<string>('');
@@ -14,13 +14,21 @@ function CreateUser() {
     toast.success('User created successfully');
   };
 
-  const handleOnError = (error: { field: string; message: string }[]) => {
-    error.map((err) => {
-      toast.error(err.message);
-    });
+  const handleOnError = (
+    error: { field: string; message: string }[] | string | { message: string }
+  ) => {
+    if (!Array.isArray(error)) {
+      toast.error(error as string);
+    } else {
+      error.map((err) => {
+        toast.error(err.message);
+      });
+    }
   };
 
   const { mutate, isLoading } = useCreateUser(handleOnSuccess, handleOnError);
+
+  console.log(isLoading);
 
   const handleCreateUser = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -92,7 +100,7 @@ function CreateUser() {
       <button
         className='mt-4 px-2 py-4 bg-[#3aa168] hover:bg-[#219d59] text-white w-full rounded-md flex items-center justify-center font-bold cursor-pointer mr-4 text-sm disabled:opacity-50 disabled:cursor-not-allowed h-10'
         onClick={handleCreateUser}
-        disabled={isLoading || !name || !email || !password || !confirmPassword}
+        // disabled={isLoading || !name || !email || !password || !confirmPassword}
       >
         Create User
       </button>

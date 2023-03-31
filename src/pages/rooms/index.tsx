@@ -1,7 +1,8 @@
 import { useContext, useState } from 'react';
 import { useNavigate, useOutletContext } from 'react-router-dom';
-import { GlobalContext } from '../../context/globalContext';
-import useLocalStorage from '../../hooks/useLocalStorage';
+
+import { GlobalContext } from '@/context/globalContext';
+import useLocalStorage from '@/hooks/useLocalStorage';
 
 function Rooms() {
   const { setRoom, setType } = useContext(GlobalContext);

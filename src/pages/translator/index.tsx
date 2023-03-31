@@ -1,9 +1,10 @@
 import { useContext, useEffect, useState } from 'react';
 import { useLocation, useOutletContext } from 'react-router-dom';
-import { ConnectionPill, RoomInfo } from '../../components';
-import { GlobalContext } from '../../context/globalContext';
-import useLocalStorage from '../../hooks/useLocalStorage';
-import { exportText } from '../../utils/helper';
+
+import { ConnectionPill, RoomInfo } from '@/components';
+import { GlobalContext } from '@/context/globalContext';
+import useLocalStorage from '@/hooks/useLocalStorage';
+import { exportText } from '@/utils/helper';
 
 function Translator() {
   const { room } = useContext(GlobalContext);
