@@ -1,0 +1,5 @@
+[[redirects]]
+  from = "/api/*"
+  to = "${VITE_APP_API_BASE_URL_PRODUCTION}/:splat"
+  status = 200
+  force = true
