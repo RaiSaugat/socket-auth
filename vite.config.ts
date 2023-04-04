@@ -14,10 +14,10 @@ export default defineConfig(({ command, mode }) => {
     plugins: [react()],
     server: {
       proxy: {
-        '/api': {
+        '/api/v1': {
           target: url,
           changeOrigin: true,
-          secure: true,
+          secure: false,
         },
       },
     },

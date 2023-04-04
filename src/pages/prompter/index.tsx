@@ -3,7 +3,7 @@ import { flushSync } from 'react-dom';
 import FontPicker from 'font-picker-react';
 import { useLocation, useOutletContext } from 'react-router-dom';
 
-import './index.css';
+import './index.scss';
 
 import { ConnectionPill, RoomInfo } from '@/components';
 import useLocalStorage from '@/hooks/useLocalStorage';
