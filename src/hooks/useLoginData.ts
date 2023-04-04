@@ -13,7 +13,7 @@ export const useLogin = (onSuccess?: any, onError?: any) => {
       onSuccess(data.data);
     },
     onError: (
-      error: string | { message: string } | { field: string; message: string }[]
+      error: { message: string } | { field: string; message: string }[]
     ) => {
       onError(error);
     },

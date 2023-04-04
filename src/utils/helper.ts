@@ -21,7 +21,12 @@ export const exportText = (text: string) => {
 export const connectSocket = async () => {
   const { token } = await fetchToken();
 
-  let socket = io('http://localhost:3001', {
+  const socketURL =
+    import.meta.env.VITE_APP_HOST_ENV === 'development'
+      ? import.meta.env.VITE_APP_API_BASE_URL_LOCAL
+      : import.meta.env.VITE_APP_API_BASE_URL_PRODUCTION;
+
+  let socket = io(socketURL, {
     transports: ['websocket', 'polling'],
     auth: {
       token,

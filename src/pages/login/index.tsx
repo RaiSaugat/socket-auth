@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 import { useLogin } from '@/hooks/useLoginData';
-import { Loader } from '@/components';
+import { Label, Loader } from '@/components';
+import Input from '@/components/input';
 
 function Login() {
   const navigate = useNavigate();
@@ -46,10 +47,10 @@ function Login() {
   };
 
   const handleOnError = (
-    error: { field: string; message: string }[] | string | { message: string }
+    error: { field: string; message: string }[] | { message: string }
   ) => {
     if (!Array.isArray(error)) {
-      toast.error(error as string);
+      toast.error(error.message);
     } else {
       error.map((err) => {
         toast.error(err.message);
@@ -75,21 +76,20 @@ function Login() {
         className='bg-violet-100 border-2 border-violet-300 border-solid rounded-md p-5'
       >
         <div className='mb-4'>
-          <span className='block mb-1'>Email</span>
-          <input
+          <Label value='Email' />
+          <Input
             type='text'
             value={email}
-            onChange={(e) => {
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               setError('');
               setEmail(e.target.value);
             }}
             required
-            className='w-full h-10 p-2 border-2 border-gray-300 rounded-md mr-4'
           />
         </div>
 
         <div className='mb-4'>
-          <span className='block mb-1'>Password</span>
+          <Label value='Password' />
           <input
             type='password'
             value={password}

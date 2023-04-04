@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 
 function Header({ isAdmin, socket }: { isAdmin?: boolean; socket?: any }) {
   const navigate = useNavigate();
@@ -23,23 +23,33 @@ function Header({ isAdmin, socket }: { isAdmin?: boolean; socket?: any }) {
 
   if (isAdmin) {
     return (
-      <div className='flex justify-between mb-4 px-10 py-4 bg-violet-200'>
+      <div className='flex justify-between px-10 py-4 bg-violet-200'>
         <h1 className='cursor-pointer' onClick={() => navigate('/admin')}>
           Admin
         </h1>
         <div className='flex'>
-          <p
-            className='mr-4 cursor-pointer'
-            onClick={() => navigate('/create-user')}
+          <NavLink
+            className={({ isActive }) =>
+              isActive
+                ? 'mr-4 cursor-pointer border-b-2 border-purple-800 border-solid'
+                : 'mr-4 cursor-pointer'
+            }
+            to={'/create-user'}
           >
             Create User
-          </p>
-          <p
-            className='mr-4 cursor-pointer'
-            onClick={() => navigate('/profile')}
+          </NavLink>
+
+          <NavLink
+            className={({ isActive }) =>
+              isActive
+                ? 'mr-4 cursor-pointer border-b-2 border-purple-800 border-solid'
+                : 'mr-4 cursor-pointer'
+            }
+            to={'/profile'}
           >
             Profile
-          </p>
+          </NavLink>
+
           <p className='cursor-pointer' onClick={handleLogout}>
             Logout
           </p>
@@ -49,7 +59,7 @@ function Header({ isAdmin, socket }: { isAdmin?: boolean; socket?: any }) {
   }
 
   return (
-    <div className='flex justify-between mb-4 px-10 py-4 bg-violet-200'>
+    <div className='flex justify-between px-10 py-4 bg-violet-200'>
       <h1>User</h1>
       <div className='flex'>
         <p

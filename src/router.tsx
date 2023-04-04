@@ -57,7 +57,9 @@ export const AdminRoute = () => {
   return type === 'ADMIN' ? (
     <>
       <Header isAdmin />
-      <Outlet />
+      <div className='p-10 py-4'>
+        <Outlet />
+      </div>
     </>
   ) : (
     <Navigate to='/' />

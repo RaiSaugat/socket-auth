@@ -5,13 +5,17 @@ import path from 'path';
 // https://vitejs.dev/config/
 export default defineConfig(({ command, mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
+  const url =
+    env.VITE_APP_HOST_ENV === 'development'
+      ? env.VITE_APP_API_BASE_URL_LOCAL
+      : env.VITE_APP_API_BASE_URL_PRODUCTION;
 
   return {
     plugins: [react()],
     server: {
       proxy: {
         '/api': {
-          target: env.VITE_APP_API_BASE_URL,
+          target: url,
           changeOrigin: true,
           secure: true,
         },
