@@ -23,7 +23,7 @@ const Input = forwardRef<Ref, Props>((props, ref) => {
       <div className="relative">
         <input
           ref={ref}
-          type="password"
+          type={inputType}
           value={value}
           onChange={onChange}
           className={cn('w-full h-10 p-2 pl-3 pr-10 border-2 border-gray-300 rounded-md mr-4', {
