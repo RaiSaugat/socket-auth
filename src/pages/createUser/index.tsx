@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { toast } from 'react-toastify';
 
 import { useCreateUser } from '@/hooks/useAdminData';
@@ -16,16 +16,13 @@ function CreateUser() {
     toast.success('User created successfully');
   };
 
-  const handleOnError = (
-    error: { field: string; message: string }[] | { message: string }
-  ) => {
-    if (!Array.isArray(error)) {
-      toast.error(error.message);
-    } else {
-      error.map((err) => {
-        toast.error(err.message);
-      });
-    }
+  const handleOnError = (error: {
+    error: { field: string; message: string }[];
+    success: boolean;
+  }) => {
+    error.error.map((err) => {
+      toast.error(err.message);
+    });
   };
 
   const { mutate, isLoading } = useCreateUser(handleOnSuccess, handleOnError);
@@ -40,17 +37,17 @@ function CreateUser() {
         email,
         password,
         type: 'USER',
-        username: name,
+        username: name
       });
     }
   };
 
   return (
-    <form onSubmit={handleCreateUser} className='mx-auto max-w-[500px]'>
-      <div className='mb-4'>
-        <Label value='Name' />
+    <form onSubmit={handleCreateUser} className="mx-auto max-w-[500px]">
+      <div className="mb-4">
+        <Label value="Name" />
         <Input
-          type='text'
+          type="text"
           value={name}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             setName(e.target.value);
@@ -59,10 +56,10 @@ function CreateUser() {
         />
       </div>
 
-      <div className='mb-4'>
-        <Label value='Email' />
+      <div className="mb-4">
+        <Label value="Email" />
         <Input
-          type='email'
+          type="email"
           value={email}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             setEmail(e.target.value);
@@ -71,10 +68,10 @@ function CreateUser() {
         />
       </div>
 
-      <div className='mb-4'>
-        <Label value='Password' />
+      <div className="mb-4">
+        <Label value="Password" />
         <Input
-          type='password'
+          type="password"
           value={password}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             setPassword(e.target.value);
@@ -83,10 +80,10 @@ function CreateUser() {
         />
       </div>
 
-      <div className='mb-4'>
-        <Label value='Confirm Password' />
+      <div className="mb-4">
+        <Label value="Confirm Password" />
         <Input
-          type='password'
+          type="password"
           value={confirmPassword}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             setConfirmPassword(e.target.value);
@@ -95,15 +92,10 @@ function CreateUser() {
           required
           classnames={error ? 'border-[2px] border-red-300 border-solid' : ''}
         />
-        {error && <span className='text-red-400'>{error}</span>}
+        {error && <span className="text-red-400">{error}</span>}
       </div>
 
-      <Button
-        disabled={isLoading}
-        type='submit'
-        isLoading={isLoading}
-        text='Create User'
-      />
+      <Button disabled={isLoading} type="submit" isLoading={isLoading} text="Create User" />
     </form>
   );
 }

@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { toast } from 'react-toastify';
 
-import { CopyClipboard } from '@/components';
+import { Button, CopyClipboard, Input } from '@/components';
 import { useGenerateToken, useUpdateToken } from '@/hooks/useAdminData';
 import { useFetchToken } from '@/hooks/useTokenData';
 
@@ -27,7 +27,7 @@ function Admin() {
     toast.error('Failed to fetch token');
   };
 
-  useFetchToken(handleOnSuccess, handleOnError);
+  const { isLoading: fetchLoading } = useFetchToken(handleOnSuccess, handleOnError);
 
   const handleOnTokenUpdateSuccess = (data: TokenDTO) => {
     setToken(data.token);
@@ -54,8 +54,10 @@ function Admin() {
     handleOnTokenUpdateError
   );
 
-  const { mutate: generateToken, isLoading: tokenGenerateLoading } =
-    useGenerateToken(handleOnGenerateSuccess, handleOnGenerateError);
+  const { mutate: generateToken, isLoading: tokenGenerateLoading } = useGenerateToken(
+    handleOnGenerateSuccess,
+    handleOnGenerateError
+  );
 
   const handleTokenGenerate = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -68,23 +70,18 @@ function Admin() {
   };
 
   return (
-    <div className='p-20'>
-      <div className='flex'>
-        <input
-          type='text'
-          value={token}
-          readOnly
-          className='w-full h-10 p-2 border-2 border-gray-300 rounded-md mr-4'
-        />
+    <div className="p-20">
+      <div className="flex mb-4">
+        <Input type="text" value={token} readOnly />
         <CopyClipboard text={token} />
       </div>
-      <button
-        className='mt-4 px-2 py-4 bg-violet-600 hover:bg-violet-800 text-white h-10 w-full rounded-md flex items-center justify-center font-bold cursor-pointer mr-4 text-sm disabled:opacity-50 disabled:cursor-not-allowed'
+      <Button
         onClick={handleTokenGenerate}
-        disabled={isLoading || tokenGenerateLoading}
-      >
-        Generate Token
-      </button>
+        disabled={isLoading || tokenGenerateLoading || fetchLoading}
+        text="Generate Token"
+        isLoading={isLoading || tokenGenerateLoading || fetchLoading}
+        type="button"
+      />
     </div>
   );
 }

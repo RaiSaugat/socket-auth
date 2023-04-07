@@ -1,11 +1,10 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import cn from 'classnames';
 
-import { Button, Label, Loader } from '@/components';
+import { Button, Label } from '@/components';
 import { useUpdateAdminProfile } from '@/hooks/useAdminData';
 import Input from '@/components/input';
-import { AxiosError } from 'axios';
 
 function AdminProfile() {
   const userData = JSON.parse(localStorage.getItem('userData') || '{}');
@@ -20,7 +19,7 @@ function AdminProfile() {
   useEffect(() => {
     setUsername(userData.username);
     setEmail(userData.email);
-  }, []);
+  }, [userData.email, userData.username]);
 
   const handleSuccess = (data: { username: string; email: string }) => {
     const { username, email } = data;
@@ -33,7 +32,7 @@ function AdminProfile() {
       JSON.stringify({
         ...userData,
         username: username,
-        email: email,
+        email: email
       })
     );
   };
@@ -42,10 +41,7 @@ function AdminProfile() {
     toast.error(error.message);
   };
 
-  const { mutate, isLoading } = useUpdateAdminProfile(
-    handleSuccess,
-    handleError
-  );
+  const { mutate, isLoading } = useUpdateAdminProfile(handleSuccess, handleError);
 
   const handleSettingChange = (text: 'details' | 'password') => {
     setShowDetails(text === 'details');
@@ -53,50 +49,51 @@ function AdminProfile() {
 
   const renderDetails = () => {
     return (
-      <div className='flex flex-col ml-10'>
-        <h2 className='text-xl mb-4 font-bold'>Details</h2>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            if (!isLoading) {
-              mutate({ username, email });
-            }
-          }}
-        >
-          <div className='mb-4'>
-            <span className='block'>Name</span>
-            <input
-              type='text'
-              value={username}
-              onChange={(e) => {
-                setUsername(e.target.value);
-              }}
-              required
-              className='w-full h-10 p-2 border-2 border-gray-300 rounded-md mr-4'
-            />
-          </div>
+      <form
+        onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
+          e.preventDefault();
+          if (!isLoading) {
+            mutate({
+              username,
+              email,
+              updateEmail: userData.email !== email
+            });
+          }
+        }}
+        className="flex flex-col ml-10 w-64">
+        <h2 className="text-xl mb-4 font-bold select-none">Details</h2>
 
-          <div className='mb-4'>
-            <span className='block'>Email</span>
-
-            <input
-              type='email'
-              value={email}
-              onChange={(e) => {
-                setEmail(e.target.value);
-              }}
-              required
-              className='w-full h-10 p-2 border-2 border-gray-300 rounded-md mr-4'
-            />
-          </div>
-          <Button
-            disabled={isLoading || !username || !email}
-            type='submit'
-            isLoading={isLoading}
-            text='Update'
+        <div className="mb-4">
+          <span className="block">Name</span>
+          <Input
+            type="text"
+            value={username}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+              setUsername(e.target.value);
+            }}
+            required
           />
-        </form>
-      </div>
+        </div>
+
+        <div className="mb-4">
+          <span className="block">Email</span>
+
+          <Input
+            type="email"
+            value={email}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+              setEmail(e.target.value);
+            }}
+            required
+          />
+        </div>
+        <Button
+          disabled={isLoading || !username || !email}
+          type="submit"
+          isLoading={isLoading}
+          text="Update"
+        />
+      </form>
     );
   };
 
@@ -109,18 +106,22 @@ function AdminProfile() {
             setError('Passwords do not match');
           } else {
             if (!isLoading) {
-              mutate({ email, username, password: password });
+              mutate({
+                email,
+                username,
+                password: password,
+                updateEmail: userData.email !== email
+              });
             }
           }
         }}
-        className='flex flex-col ml-10'
-      >
-        <h2 className='text-xl mb-4 font-bold select-none'>Change Password</h2>
-        <div className='mb-4'>
-          <Label value='New Password' />
-          <div className='relative'>
+        className="flex flex-col ml-10 w-64">
+        <h2 className="text-xl mb-4 font-bold select-none">Change Password</h2>
+        <div className="mb-4">
+          <Label value="New Password" />
+          <div className="relative">
             <Input
-              type='password'
+              type="password"
               value={password}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 setPassword(e.target.value);
@@ -130,11 +131,11 @@ function AdminProfile() {
           </div>
         </div>
 
-        <div className='mb-4'>
-          <Label value='Confirm Password' />
-          <div className='relative'>
+        <div className="mb-4">
+          <Label value="Confirm Password" />
+          <div className="relative">
             <Input
-              type='password'
+              type="password"
               value={confirmPassword}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 setError('');
@@ -143,51 +144,44 @@ function AdminProfile() {
               required
             />
           </div>
-          {error && <span className='text-red-400'>{error}</span>}
+          {error && <span className="text-red-400">{error}</span>}
         </div>
 
         <Button
-          disabled={
-            isLoading ||
-            confirmPassword === '' ||
-            password === '' ||
-            password === ''
-          }
-          type='submit'
+          disabled={isLoading || confirmPassword === '' || password === '' || password === ''}
+          type="submit"
           isLoading={isLoading}
-          text='Update'
+          text="Update"
         />
       </form>
     );
   };
 
   return (
-    <div className='flex'>
-      <div className='flex bg-violet-100 border-solid border-2 border-violet-200 rounded-lg py-4 flex-col w-56'>
-        <p className='mb-4 text-2xl px-6'>Settings</p>
+    <div className="flex">
+      <div className="flex bg-violet-100 border-solid border-2 border-violet-200 rounded-lg py-4 flex-col w-56">
+        <p className="mb-4 text-2xl px-6">Settings</p>
 
         <span
           className={cn(
             'text-lg mb-1 cursor-pointer hover:bg-violet-200 block mx-2 px-4 py-2 select-none rounded-md',
             {
-              ['bg-violet-200']: showDetails,
+              ['bg-violet-200']: showDetails
             }
           )}
-          onClick={() => handleSettingChange('details')}
-        >
+          onClick={() => handleSettingChange('details')}>
           My Details
         </span>
         <span
           className={cn(
             'text-lg cursor-pointer hover:bg-violet-200 block mx-2 px-4 py-2 select-none rounded-md',
             {
-              ['bg-violet-200']: !showDetails,
+              ['bg-violet-200']: !showDetails
             }
           )}
           onClick={() => {
             handleSettingChange('password');
-          }}
-        >
+          }}>
           Password
         </span>
       </div>

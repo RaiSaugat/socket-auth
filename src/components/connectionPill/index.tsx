@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { Socket } from 'socket.io-client';
 
-function ConnectionPill({ socket }: { socket: any }) {
+function ConnectionPill({ socket }: { socket: Socket }) {
   const [connection, setConnection] = useState(false);
 
   useEffect(() => {

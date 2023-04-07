@@ -6,17 +6,25 @@ type UserDTO = {
   email: string;
   username: string;
   password?: string;
+  updateEmail: boolean;
 };
 
-const updateAdminProfile = async ({ email, username, password }: UserDTO) => {
+const updateAdminProfile = async ({
+  email,
+  username,
+  password,
+  updateEmail,
+}: UserDTO) => {
   const payload: UserDTO = {
     email,
     username,
+    updateEmail,
   };
 
   if (password) {
     payload.password = password;
   }
+
   return await axiosService
     .put(`/api/v1/user`, payload, true)
     .then((response: any) => response.data);
@@ -46,7 +54,11 @@ const createUser = async (data: {
 export const useUpdateAdminProfile = (onSuccess?: any, onError?: any) => {
   return useMutation(updateAdminProfile, {
     onSuccess,
-    onError,
+    onError: (
+      error: string | { message: string } | { field: string; message: string }[]
+    ) => {
+      onError(error);
+    },
   });
 };
 

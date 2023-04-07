@@ -1,14 +1,15 @@
-import { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useLocation, useOutletContext } from 'react-router-dom';
+import { Socket } from 'socket.io-client';
 
-import { ConnectionPill, RoomInfo } from '@/components';
+import { Button, ConnectionPill, RoomInfo } from '@/components';
 import { GlobalContext } from '@/context/globalContext';
 import useLocalStorage from '@/hooks/useLocalStorage';
 import { exportText } from '@/utils/helper';
 
 function Translator() {
   const { room } = useContext(GlobalContext);
-  const { socket }: { socket: any } = useOutletContext();
+  const { socket }: { socket: Socket } = useOutletContext();
 
   const [message, setMessage] = useLocalStorage('message', '');
   const [roomName, setRoomName] = useState<string>('');
@@ -26,16 +27,16 @@ function Translator() {
   };
 
   return (
-    <div className='flex items-center justify-center flex-col p-4 relative'>
+    <div className="flex items-center justify-center flex-col p-4 relative">
       <RoomInfo socket={socket} roomName={roomName} />
       <ConnectionPill socket={socket} />
-      <div className='mb-5 mt-5 md:mt-0'>
-        <h1 className='text-2xl'>Live Translation</h1>
+      <div className="mb-5 mt-5 md:mt-0">
+        <h1 className="text-2xl">Live Translation</h1>
       </div>
-      <div className='w-[100%] md:w-[80%] '>
+      <div className="w-[100%] md:w-[80%]">
         <textarea
-          placeholder='Message'
-          className='border-2 border-solid border-gray-300 rounded-md w-full h-[300px] p-2'
+          placeholder="Message"
+          className="border-2 border-solid border-gray-300 rounded-md w-full h-[300px] p-2 mb-5"
           onChange={(e) => {
             setMessage(e.target.value);
           }}
@@ -44,17 +45,11 @@ function Translator() {
               socket.emit('live-translate', message, room);
             }
           }}
-          value={message}
-        >
+          value={message}>
           {message}
         </textarea>
 
-        <button
-          className='w-full bg-violet-600 hover:bg-violet-800 h-[50px] border-0 rounded-md cursor-pointer text-white mt-3'
-          onClick={handleExport}
-        >
-          Export Speech
-        </button>
+        <Button type="button" text="Export Speech" onClick={handleExport} />
       </div>
     </div>
   );

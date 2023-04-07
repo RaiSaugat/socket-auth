@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 import { useLogin } from '@/hooks/useLoginData';
-import { Label, Loader } from '@/components';
+import { Button, Label } from '@/components';
 import Input from '@/components/input';
 
 function Login() {
@@ -22,9 +22,7 @@ function Login() {
     username: string;
   }) => {
     const { id, token, username, email, type } = data;
-    const tokenExpirationDate: string | Date = new Date(
-      new Date().getTime() + 1000 * 60 * 60
-    );
+    const tokenExpirationDate: string | Date = new Date(new Date().getTime() + 1000 * 60 * 60);
     localStorage.setItem(
       'userData',
       JSON.stringify({
@@ -36,7 +34,7 @@ function Login() {
         expiration:
           typeof tokenExpirationDate === 'string'
             ? tokenExpirationDate
-            : tokenExpirationDate.toISOString(),
+            : tokenExpirationDate.toISOString()
       })
     );
     if (type === 'USER') {
@@ -46,9 +44,7 @@ function Login() {
     }
   };
 
-  const handleOnError = (
-    error: { field: string; message: string }[] | { message: string }
-  ) => {
+  const handleOnError = (error: { field: string; message: string }[] | { message: string }) => {
     if (!Array.isArray(error)) {
       toast.error(error.message);
     } else {
@@ -66,19 +62,18 @@ function Login() {
   };
 
   return (
-    <div className='flex items-center justify-center h-screen'>
+    <div className="flex items-center justify-center h-screen">
       <form
         onSubmit={(e: React.MouseEvent<HTMLFormElement>) => {
           if (!isLoading) {
             handleLogin(e);
           }
         }}
-        className='bg-violet-100 border-2 border-violet-300 border-solid rounded-md p-5'
-      >
-        <div className='mb-4'>
-          <Label value='Email' />
+        className="bg-violet-100 border-2 border-violet-300 border-solid rounded-md p-5">
+        <div className="mb-4">
+          <Label value="Email" />
           <Input
-            type='text'
+            type="text"
             value={email}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               setError('');
@@ -88,29 +83,22 @@ function Login() {
           />
         </div>
 
-        <div className='mb-4'>
-          <Label value='Password' />
-          <input
-            type='password'
+        <div className="mb-4">
+          <Label value="Password" />
+          <Input
+            type="password"
             value={password}
-            onChange={(e) => {
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               setError('');
               setPassword(e.target.value);
             }}
             required
-            className='w-full h-10 p-2 border-2 border-gray-300 rounded-md mr-4'
           />
         </div>
 
-        <button
-          className='mt-4 px-2 py-4 bg-violet-600 hover:bg-violet-800 text-white h-10 w-full rounded-md flex items-center justify-center font-bold cursor-pointer mr-4 text-sm disabled:opacity-50 disabled:cursor-not-allowed'
-          type='submit'
-          disabled={isLoading}
-        >
-          {isLoading ? <Loader color='#fff' /> : 'Login'}
-        </button>
+        <Button type="submit" disabled={isLoading} text="Login" isLoading={isLoading} />
 
-        {error && <p className='text-red-500 mt-2'>{error}</p>}
+        {error && <p className="text-red-500 mt-2">{error}</p>}
       </form>
     </div>
   );

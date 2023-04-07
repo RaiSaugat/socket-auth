@@ -12,9 +12,10 @@ export const useLogin = (onSuccess?: any, onError?: any) => {
     onSuccess: (data: AxiosResponse) => {
       onSuccess(data.data);
     },
-    onError: (
-      error: { message: string } | { field: string; message: string }[]
-    ) => {
+    onError: (error: {
+      error: { field: string; message: string }[];
+      success: boolean;
+    }) => {
       onError(error);
     },
   });

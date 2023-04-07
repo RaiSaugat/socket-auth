@@ -5,14 +5,17 @@ function Header({ isAdmin, socket }: { isAdmin?: boolean; socket?: any }) {
 
   const clearData = () => {
     const roomName = JSON.parse(localStorage.getItem('room') || '{}');
+    const type = JSON.parse(localStorage.getItem('type') || '{}');
+
     if (!isAdmin) {
-      socket.emit('leave-room', roomName, () => {
+      socket.emit('leave-room', roomName, type, () => {
         socket.disconnect();
       });
     }
     localStorage.removeItem('room');
     localStorage.removeItem('type');
     localStorage.removeItem('message');
+    localStorage.removeItem('token');
   };
 
   const handleLogout = () => {
@@ -23,19 +26,18 @@ function Header({ isAdmin, socket }: { isAdmin?: boolean; socket?: any }) {
 
   if (isAdmin) {
     return (
-      <div className='flex justify-between px-10 py-4 bg-violet-200'>
-        <h1 className='cursor-pointer' onClick={() => navigate('/admin')}>
+      <div className="flex justify-between px-10 py-4 bg-violet-200">
+        <h1 className="cursor-pointer" onClick={() => navigate('/admin')}>
           Admin
         </h1>
-        <div className='flex'>
+        <div className="flex">
           <NavLink
             className={({ isActive }) =>
               isActive
                 ? 'mr-4 cursor-pointer border-b-2 border-purple-800 border-solid'
                 : 'mr-4 cursor-pointer'
             }
-            to={'/create-user'}
-          >
+            to={'/create-user'}>
             Create User
           </NavLink>
 
@@ -45,12 +47,11 @@ function Header({ isAdmin, socket }: { isAdmin?: boolean; socket?: any }) {
                 ? 'mr-4 cursor-pointer border-b-2 border-purple-800 border-solid'
                 : 'mr-4 cursor-pointer'
             }
-            to={'/profile'}
-          >
+            to={'/profile'}>
             Profile
           </NavLink>
 
-          <p className='cursor-pointer' onClick={handleLogout}>
+          <p className="cursor-pointer" onClick={handleLogout}>
             Logout
           </p>
         </div>
@@ -59,19 +60,18 @@ function Header({ isAdmin, socket }: { isAdmin?: boolean; socket?: any }) {
   }
 
   return (
-    <div className='flex justify-between px-10 py-4 bg-violet-200'>
+    <div className="flex justify-between px-10 py-4 bg-violet-200">
       <h1>User</h1>
-      <div className='flex'>
+      <div className="flex">
         <p
-          className='mr-4 cursor-pointer'
+          className="mr-4 cursor-pointer"
           onClick={() => {
             clearData();
             navigate('/rooms');
-          }}
-        >
+          }}>
           Room
         </p>
-        <p className='cursor-pointer' onClick={handleLogout}>
+        <p className="cursor-pointer" onClick={handleLogout}>
           Logout
         </p>
       </div>

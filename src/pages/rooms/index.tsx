@@ -1,35 +1,39 @@
-import { useContext, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { useNavigate, useOutletContext } from 'react-router-dom';
+import { Socket } from 'socket.io-client';
 
 import { GlobalContext } from '@/context/globalContext';
 import useLocalStorage from '@/hooks/useLocalStorage';
+import { toast } from 'react-toastify';
+import { Button, Input } from '@/components';
 
 function Rooms() {
   const { setRoom, setType } = useContext(GlobalContext);
-  const { socket }: { socket: any } = useOutletContext();
+  const { socket }: { socket: Socket } = useOutletContext();
 
   const [localRoomName, setLocalRoomName] = useLocalStorage('room', '');
   const [localType, setLocalType] = useLocalStorage('type', '');
   const [token, setToken] = useState('');
-
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
 
-  const handleJoinRoom = (e: any) => {
+  const handleJoinRoom = (e: React.MouseEvent<HTMLButtonElement>) => {
+    setIsLoading(true);
     e.preventDefault();
     socket.connect();
     socket.emit(
       'join-room',
       { room: localRoomName, type: localType, masterToken: token },
       (data: { success: boolean; message: string }) => {
+        setIsLoading(false);
         if (!data.success) {
-          setErrorMessage(data.message);
+          toast.error(data.message);
         } else {
           navigate('/telecast', {
             state: {
-              room: data.message,
-            },
+              room: data.message
+            }
           });
         }
       }
@@ -37,66 +41,61 @@ function Rooms() {
   };
 
   return (
-    <div className='flex flex-col h-full items-center justify-center'>
-      <form className='bg-violet-100 border-2 border-violet-300 border-solid rounded-md p-5'>
-        <div className='mb-4'>
-          <span className='block'>Room</span>
-          <input
-            type='text'
+    <div className="flex flex-col h-full items-center justify-center">
+      <form className="bg-violet-100 border-2 border-violet-300 border-solid rounded-md p-5">
+        <div className="mb-4">
+          <span className="block">Room</span>
+          <Input
+            type="text"
             value={localRoomName}
-            onChange={(e) => {
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               setLocalRoomName(e.target.value);
               setRoom(e.target.value);
             }}
-            className='w-full h-10 p-2 border-2 border-gray-300 rounded-md mr-4'
           />
         </div>
 
-        <div className='mb-4'>
-          <span className='block mb-2'>Type</span>
-          <div className='flex items-center'>
+        <div className="mb-4">
+          <span className="block mb-2">Type</span>
+          <div className="flex items-center">
             <select
-              name='roles'
-              id='roles'
-              className='w-full p-1 rounded-md h-10 cursor-pointer'
+              name="roles"
+              id="roles"
+              className="w-full p-1 rounded-md h-10 cursor-pointer"
               onChange={(e) => {
                 setLocalType(e.target.value);
                 setType(e.target.value);
-              }}
-            >
-              <option value=''>Select Type</option>
-              <option value='Translator'>Translator</option>
-              <option value='Prompter'>Prompter</option>
+              }}>
+              <option value="">Select Type</option>
+              <option value="Translator">Translator</option>
+              <option value="Prompter">Prompter</option>
             </select>
           </div>
         </div>
 
-        <div>
-          <span className='block mb-1'>Token</span>
-          <input
-            type='text'
+        <div className="mb-4">
+          <span className="block mb-1">Token</span>
+          <Input
+            type="text"
             value={token}
-            onChange={(e) => {
-              setErrorMessage('');
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               setToken(e.target.value);
             }}
-            className='w-full h-10 p-2 border-2 border-gray-300 rounded-md mr-4'
           />
         </div>
 
-        <button
-          className='mt-4 px-2 py-4 bg-violet-600 hover:bg-violet-800 text-white h-4 w-full rounded-md flex items-center justify-center font-bold cursor-pointer mr-4 text-sm disabled:opacity-50 disabled:cursor-not-allowed'
+        <Button
+          text="Join"
           onClick={(e) => {
             if (localRoomName && localType) {
               handleJoinRoom(e);
             }
           }}
           disabled={!localRoomName || !localType}
-        >
-          Join
-        </button>
+          type="button"
+          isLoading={isLoading}
+        />
       </form>
-      {errorMessage && <div className='text-red-400 mt-2'>{errorMessage}</div>}
     </div>
   );
 }

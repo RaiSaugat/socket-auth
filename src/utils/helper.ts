@@ -35,3 +35,9 @@ export const connectSocket = async () => {
 
   return socket;
 };
+
+export const getBaseApi = () => {
+  return import.meta.env.VITE_APP_HOST_ENV === 'development'
+    ? import.meta.env.VITE_APP_API_BASE_URL_LOCAL
+    : import.meta.env.VITE_APP_API_BASE_URL_PRODUCTION;
+};

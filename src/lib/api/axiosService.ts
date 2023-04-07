@@ -3,14 +3,14 @@ import axios from 'axios';
 import { getToken } from '../services/requestToken';
 import { handleAxiosError } from './handleAxiosError';
 import { handleAxiosResponse } from './handleAxiosSuccess';
+import { getBaseApi } from '@/utils/helper';
 
 class AxiosService {
   http: any;
   httpWithToken: any;
   constructor() {
     const httpConfig = {
-      //   baseURL: `${import.meta.env.VITE_APP_API_BASE_URL}`,
-
+      baseURL: getBaseApi(),
       headers: {
         'Content-Type': 'application/json',
         Accept: 'application/json',
